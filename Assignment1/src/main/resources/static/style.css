@@ -1,0 +1,33 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: 0;
+}
+
+h1 {
+	font-family: "JetBrains Mono", monospace;
+	text-align: center;
+}
+
+body {
+	font-family: "Space Mono", monospace;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding: 14px;
+	min-height: 100vh;
+	background-color: bisque;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+form textarea {
+	resize: none;
+	width: 100%;
+	min-height: 150px;
+	padding: 14px;
+}
