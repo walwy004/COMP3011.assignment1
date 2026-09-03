@@ -1,7 +1,7 @@
 * {
 	margin: 0;
 	padding: 0;
-	box-sizing: 0;
+	box-sizing: border-box;
 }
 
 h1 {
@@ -27,7 +27,29 @@ form {
 
 form textarea {
 	resize: none;
-	width: 100%;
 	min-height: 150px;
 	padding: 14px;
+	width: 100%;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.recordBtn {
+	padding: 4px;
+	font-size: 100px;
+	cursor: pointer;
+	background-color: rgb(255, 245, 238); /* soft warm white, sits nicely on bisque */
+	color: rgb(220, 38, 38); 
+	border: none;
+	outline: none;
+	appearance: none;
+	aspect-ratio: 1/1;
+	border-radius: 50%;
+	align-self: center;
+}
+
+.recordBtn:hover {
+	background-color: rgb(220, 38, 38);
+	color: rgb(255, 245, 238);
+	transform: scale(1.05);
 }
