@@ -7,7 +7,7 @@ function startRecording() {
 	isRecording = true;
 	recordBtn.classList.add('isRecording');
 	icon.className = 'fa-solid fa-stop';	// Stop icon
-	statusText.textContent = 'Recording…';	
+	statusText.textContent = 'Recording…';
 }
 
 function stopRecording() {
