@@ -1,11 +1,15 @@
 package comp3011.assignment1.controller;
 
+import java.time.Instant;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import comp3011.assignment1.dto.ErrorResponse;
 import comp3011.assignment1.dto.ShutdownResponse;
 import comp3011.assignment1.dto.UptimeResponse;
 import comp3011.assignment1.service.ShutdownService;
@@ -29,12 +33,28 @@ public class AdminController {
 	}
 	
 	@PostMapping("/shutdown")
-    public ResponseEntity<ShutdownResponse> shutdown() {
+    public ResponseEntity<?> shutdown() {
 		
-		ShutdownResponse response = shutdownService.shutdown();
-		
+		boolean accepted = shutdownService.shutdown();
+
+        if (!accepted) {
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    409,
+                    "Conflict",
+                    "Graceful shutdown is already in progress.",
+                    "/api/v1/admin/shutdown"
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(error);
+        }
+
+        ShutdownResponse response = new ShutdownResponse("Graceful shutdown requested.");
+
         return ResponseEntity
-        		.accepted()
-        		.body(response);
+                .accepted()
+                .body(response);
     }
 }
