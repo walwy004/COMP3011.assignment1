@@ -35,7 +35,7 @@ public class AdminController {
 	@PostMapping("/shutdown")
     public ResponseEntity<?> shutdown() {
 		
-		boolean accepted = shutdownService.shutdown();
+		boolean accepted = shutdownService.shutdownServer();
 
         if (!accepted) {
             ErrorResponse error = new ErrorResponse(

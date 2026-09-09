@@ -15,7 +15,7 @@ public class ShutdownService {
 		this.context = context;
 	}
 	
-	public boolean shutdown() {
+	public boolean shutdownServer() {
 
 		// If false -> true succeeds, this is the first shutdown request.
         if (!shuttingDown.compareAndSet(false, true)) {
