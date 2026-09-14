@@ -3,15 +3,51 @@ const statusText = document.getElementById('statusText');
 const icon = recordBtn.querySelector('i');
 let isRecording = false;
 
-function startRecording() {
+let mediaRecorder;
+let audioChunks = [];
+let audioStream;
+
+async function startRecording() {
+	
+	try {
+		audioStream = await navigator.mediaDevices.getUserMedia({audio: true});
+	}
+	catch(err) {
+		statusText.textContent = 'Couldn\'t access microphone without permissions';
+		return;
+	}
+		
+	mediaRecorder = new MediaRecorder(audioStream);
+	audioChunks = [];	// Clear last recording
+	
+	mediaRecorder.addEventListener('dataavailable', event => {
+		audioChunks.push(event.data);
+	});
+	
+	mediaRecorder.addEventListener('stop', () => {
+		const audioBlob = new Blob(audioChunks, {
+			type: mediaRecorder.mimeType
+		});
+		
+		console.log("Audio type:", audioBlob.type);
+		console.log("Audio size:", audioBlob.size);
+		
+		audioStream.getTracks().forEach(track => track.stop());
+	})
+	
+	mediaRecorder.start();
 	isRecording = true;
+	
 	recordBtn.classList.add('isRecording');
 	icon.className = 'fa-solid fa-stop';	// Stop icon
 	statusText.textContent = 'Recording…';
 }
 
-function stopRecording() {
+async function stopRecording() {
+	
+	mediaRecorder.stop();
 	isRecording = false;
+	
 	recordBtn.classList.remove('isRecording');
 	recordBtn.classList.add('isStopped');
 	statusText.textContent = 'Stopped';
@@ -26,7 +62,7 @@ function stopRecording() {
 
 recordBtn.addEventListener('click', async () => {
 	if (!isRecording) {
-		startRecording();
+		await startRecording();
 	} else {
 		stopRecording();
 	}
