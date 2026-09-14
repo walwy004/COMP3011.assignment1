@@ -1,8 +1,9 @@
 const recordBtn = document.getElementById('recordBtn');
 const statusText = document.getElementById('statusText');
+const transcription = document.getElementById('transcription');
 const icon = recordBtn.querySelector('i');
-let isRecording = false;
 
+let isRecording = false;
 let mediaRecorder;
 let audioChunks = [];
 let audioStream;
@@ -24,7 +25,7 @@ async function startRecording() {
 		audioChunks.push(event.data);
 	});
 	
-	mediaRecorder.addEventListener('stop', () => {
+	mediaRecorder.addEventListener('stop', async () => {
 		const audioBlob = new Blob(audioChunks, {
 			type: mediaRecorder.mimeType
 		});
@@ -33,6 +34,8 @@ async function startRecording() {
 		console.log("Audio size:", audioBlob.size);
 		
 		audioStream.getTracks().forEach(track => track.stop());
+		
+		await uploadAudio(audioBlob);
 	})
 	
 	mediaRecorder.start();
@@ -42,6 +45,7 @@ async function startRecording() {
 	icon.className = 'fa-solid fa-stop';	// Stop icon
 	statusText.textContent = 'Recording…';
 }
+
 
 async function stopRecording() {
 	
@@ -59,6 +63,27 @@ async function stopRecording() {
 	
 	setTimeout(() => { statusText.textContent = 'Ready'; }, 1000);		// reset after a moment
 }
+
+
+async function uploadAudio(audioBlob) {
+	
+	const formData = new FormData();
+	
+	formData.append(
+		'audio',
+		audioBlob,
+		'recording.webm'
+	);
+	
+	const response = await fetch('/api/v1/transcriptions', {
+		method: 'POST',
+		body: formData
+	});
+	
+	const data = await response.json();
+	transcription.value = data.text;
+}
+
 
 recordBtn.addEventListener('click', async () => {
 	if (!isRecording) {
