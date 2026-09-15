@@ -12,6 +12,11 @@ public class GlobalStatsService {
 	private final AtomicLong inputTokens = new AtomicLong(0);
 	private final AtomicLong outputTokens = new AtomicLong(0);
 	
+	public void addTokenUsage(long input, long output) {
+        inputTokens.addAndGet(input);
+        outputTokens.addAndGet(output);
+    }
+	
 	public GlobalStatsResponse getGlobalStats() {
 		
 		return new GlobalStatsResponse(

@@ -15,13 +15,14 @@ import comp3011.assignment1.dto.OpenAITranscriptionResponse;
 @Service
 public class TranscriptionService {
 	
+	private final GlobalStatsService globalStatsService;
 	private final RestClient restClient;
 	private final String apiKey;
 	
-	public TranscriptionService() {
+	public TranscriptionService(GlobalStatsService globalStatsService) {
 		
+		this.globalStatsService = globalStatsService;
 		this.apiKey = System.getenv("OPENAI_API_KEY");
-		
 		this.restClient = RestClient.builder()
 				.baseUrl("https://api.openai.com")
 				.build();
@@ -58,6 +59,13 @@ public class TranscriptionService {
                     "OpenAI returned an empty response."
             );
         }
+		
+		if (response.usage() != null) {
+		    globalStatsService.addTokenUsage(
+		            response.usage().inputTokens(),
+		            response.usage().outputTokens()
+		    );
+		}
 		
 		return response.text();
 	}
