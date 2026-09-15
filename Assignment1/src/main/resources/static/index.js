@@ -81,6 +81,14 @@ async function uploadAudio(audioBlob) {
 	});
 	
 	const data = await response.json();
+	
+	// Test for Titan AI
+	if (!response.ok) {
+	    console.error("Transcription failed:", data);
+	    transcription.value = "Transcription failed.";
+	    return;
+	}
+	
 	transcription.value = data.text;
 }
 
