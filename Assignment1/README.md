@@ -1,4 +1,9 @@
 # Assignment 1
+## Speech-to-Text Web Application
+
+This project is a Spring Boot speech-to-text web application developed for COMP3011 Assignment 1.
+
+The application allows a browser client to record audio from the user's microphone, upload the recording to a Java backend, transcribe the audio using the OpenAI Speech-to-Text API, display the resulting transcription, expose server administration and statistics endpoints, and support graceful server shutdown.
 
 ## Concurrency Testing
 
@@ -39,13 +44,17 @@ This confirms unexpected backend failures are converted into a consistent JSON e
 
 ### TranscriptionControllerTest
 
-Regression test for `POST /api/v1/transcriptions`.
+Regression tests for `POST /api/v1/transcriptions`.
 
-- Uses a mocked `TranscriptionService` rather than the live OpenAI Cloud service
-- Uploads a simulated WebM audio file using a multipart HTTP request
-- Verifies the controller accepts the `audio` multipart field
+#### Successful transcription request
+
+- Uses a mocked `TranscriptionService` instead of the live OpenAI service
+- Uploads a simulated WebM audio file using a multipart request
 - Verifies HTTP `200 OK`
 - Verifies the returned JSON contains the expected transcription text
+
+These tests confirm the transcription controller behaves correctly without requiring
+a live API key or consuming external Cloud resources.
 
 #### Unexpected transcription failure
 
@@ -54,5 +63,28 @@ Regression test for `POST /api/v1/transcriptions`.
 - Verifies the response uses the standard OpenAPI `ErrorResponse` format
 - Verifies the status, error, message, request path and timestamp
 
-The STT service is mocked so the test is deterministic, does not require an API key, does not consume Cloud API resources, and verifies the REST controller independently of the external OpenAI service.
+### AdminControllerTest for uptime
 
+Regression tests for `GET /api/v1/admin/uptime`.
+
+#### Successful uptime request
+
+- Mocks `UptimeService` with known server start and current timestamps
+- Sends a GET request through `MockMvc`
+- Verifies HTTP `200 OK`
+- Verifies `utcServerStart`
+- Verifies `utcNow`
+- Verifies `serverUptimeSeconds`
+
+This confirms that the uptime controller continues to produce the response
+format defined by the OpenAPI specification.
+
+#### Unexpected uptime failure
+
+- Forces the mocked `UptimeService` to throw an exception
+- Verifies HTTP `500 Internal Server Error`
+- Verifies the standard OpenAPI `ErrorResponse`
+- Verifies the status, error, message, request path and timestamp
+
+This ensures unexpected failures are handled consistently without exposing
+internal exception details to API clients.
