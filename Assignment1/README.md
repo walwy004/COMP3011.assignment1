@@ -36,3 +36,16 @@ Regression test for unexpected server errors.
 - Verifies `status`, `error`, `message`, `path`, and `timestamp`
 
 This confirms unexpected backend failures are converted into a consistent JSON error response rather than exposing raw exceptions to API clients.
+
+### TranscriptionControllerTest
+
+Regression test for `POST /api/v1/transcriptions`.
+
+- Uses a mocked `TranscriptionService` rather than the live OpenAI Cloud service
+- Uploads a simulated WebM audio file using a multipart HTTP request
+- Verifies the controller accepts the `audio` multipart field
+- Verifies HTTP `200 OK`
+- Verifies the returned JSON contains the expected transcription text
+
+The STT service is mocked so the test is deterministic, does not require an API key, does not consume Cloud API resources, and verifies the REST controller independently of the external OpenAI service.
+
