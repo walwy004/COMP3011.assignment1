@@ -47,5 +47,12 @@ Regression test for `POST /api/v1/transcriptions`.
 - Verifies HTTP `200 OK`
 - Verifies the returned JSON contains the expected transcription text
 
+#### Unexpected transcription failure
+
+- Forces the mocked `TranscriptionService` to throw an exception
+- Verifies HTTP `500 Internal Server Error`
+- Verifies the response uses the standard OpenAPI `ErrorResponse` format
+- Verifies the status, error, message, request path and timestamp
+
 The STT service is mocked so the test is deterministic, does not require an API key, does not consume Cloud API resources, and verifies the REST controller independently of the external OpenAI service.
 

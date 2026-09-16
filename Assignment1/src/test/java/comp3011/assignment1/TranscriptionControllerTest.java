@@ -53,4 +53,50 @@ class TranscriptionControllerTest {
                         )
         );
     }
+    
+    @Test
+    void returns500WhenTranscriptionServiceFails() throws Exception {
+
+        when(transcriptionService.transcribe(
+                any(MultipartFile.class)))
+                .thenThrow(
+                        new RuntimeException("Test failure")
+                );
+
+        MockMultipartFile audio =
+                new MockMultipartFile(
+                        "audio",
+                        "recording.webm",
+                        "audio/webm",
+                        "fake audio data".getBytes()
+                );
+
+        mockMvc.perform(
+                multipart("/api/v1/transcriptions")
+                        .file(audio)
+        )
+        .andExpect(
+                status().isInternalServerError()
+        )
+        .andExpect(
+                jsonPath("$.status").value(500)
+        )
+        .andExpect(
+                jsonPath("$.error")
+                        .value("Internal Server Error")
+        )
+        .andExpect(
+                jsonPath("$.message")
+                        .value(
+                                "An unexpected server error occurred."
+                        )
+        )
+        .andExpect(
+                jsonPath("$.path")
+                        .value("/api/v1/transcriptions")
+        )
+        .andExpect(
+                jsonPath("$.timestamp").exists()
+        );
+    }
 }
