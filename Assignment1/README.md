@@ -23,3 +23,16 @@ Actual:
 - Exact expected values were maintained
 
 AtomicLong is used to prevent lost updates during concurrent access.
+
+### GlobalExceptionHandler / 500 Response Test
+
+Regression test for unexpected server errors.
+
+- Mocks `GlobalStatsService`
+- Forces the service to throw a runtime exception
+- Sends a GET request to `/api/v1/global/stats`
+- Verifies HTTP `500 Internal Server Error`
+- Verifies the response matches the OpenAPI `ErrorResponse` structure
+- Verifies `status`, `error`, `message`, `path`, and `timestamp`
+
+This confirms unexpected backend failures are converted into a consistent JSON error response rather than exposing raw exceptions to API clients.

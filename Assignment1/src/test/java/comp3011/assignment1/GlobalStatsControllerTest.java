@@ -39,4 +39,26 @@ class GlobalStatsControllerTest {
         .andExpect(jsonPath("$.inputTokens").value(1000))
         .andExpect(jsonPath("$.outputTokens").value(500));
     }
+
+    @Test
+    void returns500WhenServiceThrowsException() throws Exception {
+
+        when(globalStatsService.getGlobalStats())
+                .thenThrow(
+                        new RuntimeException("Test failure")
+                );
+
+        mockMvc.perform(
+                get("/api/v1/global/stats")
+        )
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.status").value(500))
+        .andExpect(jsonPath("$.error")
+                .value("Internal Server Error"))
+        .andExpect(jsonPath("$.message")
+                .value("An unexpected server error occurred."))
+        .andExpect(jsonPath("$.path")
+                .value("/api/v1/global/stats"))
+        .andExpect(jsonPath("$.timestamp").exists());
+    }
 }
