@@ -88,3 +88,32 @@ format defined by the OpenAPI specification.
 
 This ensures unexpected failures are handled consistently without exposing
 internal exception details to API clients.
+
+### ShutdownControllerTest
+
+Regression tests for `POST /api/v1/admin/shutdown`.
+
+The real `ShutdownService` is mocked so the tests do not actually terminate
+the Spring Boot application.
+
+#### Accepted shutdown request
+
+- Mocks `ShutdownService.shutdown()` to return `true`
+- Verifies HTTP `202 Accepted`
+- Verifies the response contains `"Graceful shutdown requested."`
+
+#### Shutdown already in progress
+
+- Mocks `ShutdownService.shutdown()` to return `false`
+- Verifies HTTP `409 Conflict`
+- Verifies the response matches the OpenAPI `ErrorResponse` structure
+- Verifies the status, error, message, request path and timestamp
+
+#### Unexpected shutdown failure
+
+- Forces the mocked service to throw an exception
+- Verifies HTTP `500 Internal Server Error`
+- Verifies the global exception handler returns the standard OpenAPI error format
+
+These tests ensure that changes to the shutdown controller do not break its
+documented `202`, `409` or `500` REST API behaviour.
