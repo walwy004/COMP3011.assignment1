@@ -5,6 +5,41 @@ This project is a Spring Boot speech-to-text web application developed for COMP3
 
 The application allows a browser client to record audio from the user's microphone, upload the recording to a Java backend, transcribe the audio using the OpenAI Speech-to-Text API, display the resulting transcription, expose server administration and statistics endpoints, and support graceful server shutdown.
 
+## Controller Layer
+
+Controllers are responsible for HTTP-specific behaviour, including:
+
+- endpoint routing
+- request parameters
+- HTTP status codes
+- response objects
+- converting service results into REST API responses
+
+Application logic is kept in services rather than controllers where possible.
+
+## Service Layer
+
+Services contain the application logic.
+
+Examples include:
+
+- `TranscriptionService` communicating with the OpenAI API
+- `GlobalStatsService` maintaining cumulative token usage
+- `UptimeService` calculating server uptime
+- `ShutdownService` controlling graceful shutdown
+
+## DTOs
+
+Java records are used for API response objects such as:
+
+- `TranscriptionResponse`
+- `OpenAITranscriptionResponse`
+- `GlobalStatsResponse`
+- `UptimeResponse`
+- `ShutdownResponse`
+- `ErrorResponse`
+
+
 ## Concurrency Testing
 
 The application includes regression tests for concurrency.
